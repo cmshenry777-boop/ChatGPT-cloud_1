@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Rubik's Cube — By The Numbers</title>
+<style>
+  @font-face { font-family: 'Archivo'; font-weight: 100 900; font-stretch: 62% 125%;
+    src: url(node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2) format('woff2-variations');
+    unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: 'Archivo'; font-weight: 100 900; font-stretch: 62% 125%;
+    src: url(node_modules/@fontsource-variable/archivo/files/archivo-latin-ext-wdth-normal.woff2) format('woff2-variations');
+    unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+  @font-face { font-family: 'Pretendard'; font-weight: 900; src: url(node_modules/pretendard/dist/web/static/woff2/Pretendard-Black.woff2) format('woff2'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 800; src: url(node_modules/pretendard/dist/web/static/woff2/Pretendard-ExtraBold.woff2) format('woff2'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 700; src: url(node_modules/pretendard/dist/web/static/woff2/Pretendard-Bold.woff2) format('woff2'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 600; src: url(node_modules/pretendard/dist/web/static/woff2/Pretendard-SemiBold.woff2) format('woff2'); }
+  @font-face { font-family: 'Pretendard'; font-weight: 500; src: url(node_modules/pretendard/dist/web/static/woff2/Pretendard-Medium.woff2) format('woff2'); }
+  @font-face { font-family: 'Mono'; font-weight: 400; src: url(node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Mono'; font-weight: 700; src: url(node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2) format('woff2'); }
+
+  :root {
+    --ink: #0C0C0E; --paper: #EEEAE2; --yel: #FFD400;
+    --R: #E5322D; --O: #FF7A00; --B: #1E50FF; --G: #10B062; --W: #F4F2EC; --Y: #FFD400;
+  }
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--ink);
+    font-family: 'Pretendard', sans-serif; color: var(--paper); -webkit-font-smoothing: antialiased; }
+  #stage > * { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  .layer { pointer-events: none; }
+  canvas#gl { display: block; }
+
+  /* ---------- background ---------- */
+  #bgColor { background: var(--ink); }
+  #blueprint { opacity: 0;
+    background-image:
+      linear-gradient(to right, rgba(12,12,14,.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(12,12,14,.07) 1px, transparent 1px),
+      linear-gradient(to right, rgba(12,12,14,.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(12,12,14,.05) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+    background-position: 0 0, 0 0, 0 0, 0 0; }
+  .wipeCell { position: absolute; border-radius: 18px; will-change: transform; }
+  .band { position: absolute; will-change: transform; }
+
+  /* ---------- type primitives ---------- */
+  .abs { position: absolute; white-space: nowrap; }
+  .mask { overflow: hidden; display: block; padding: 0.04em 0.02em 0.1em; margin: -0.04em -0.02em -0.1em; }
+  .inner { display: block; will-change: transform; }
+  .ch { display: inline-block; will-change: transform; }
+  .mono { font-family: 'Mono', monospace; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .disp { font-family: 'Archivo', sans-serif; font-weight: 900; font-stretch: 125%; letter-spacing: -0.02em; line-height: .86; }
+  .kr { font-family: 'Pretendard', sans-serif; font-weight: 900; letter-spacing: -0.045em; line-height: 1.04; }
+  .tab { font-variant-numeric: tabular-nums; }
+
+  /* rolling digits */
+  .roll { display: inline-block; overflow: hidden; vertical-align: top; position: relative; }
+  .roll .strip { display: block; will-change: transform; }
+  .roll .strip span { display: block; text-align: center; }
+
+  /* HUD */
+  #hud { font-family: 'Mono', monospace; font-weight: 700; font-size: 21px; letter-spacing: 0.12em; text-transform: uppercase; }
+  #hud .h { position: absolute; line-height: 1.45; white-space: nowrap; }
+  #hud .crop { position: absolute; width: 26px; height: 26px; }
+  #progress { position: absolute; left: 0; top: 0; height: 6px; width: 1080px; transform-origin: 0 0; }
+
+  /* plates (label strips) */
+  .plate { position: absolute; transform-origin: 0 50%; }
+
+  #flash { background: #fff; opacity: 0; }
+  #fade { background: var(--ink); opacity: 0; }
+  #scrim { opacity: 0; background:
+      radial-gradient(120% 60% at 50% 42%, rgba(12,12,14,0) 30%, rgba(12,12,14,.55) 100%); }
+  svg#lines { overflow: visible; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./node_modules/three/build/three.module.js",
+               "three/addons/": "./node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="stage">
+  <div id="bgColor" class="layer"></div>
+  <div id="blueprint" class="layer"></div>
+  <div id="wipe" class="layer"></div>
+  <div id="back" class="layer"></div>
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="scrim" class="layer"></div>
+  <svg id="lines" class="layer" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+  <div id="fg" class="layer"></div>
+  <div id="hud" class="layer"></div>
+  <div id="flash" class="layer"></div>
+  <div id="fade" class="layer"></div>
+</div>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="mb1" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="0 3"/></filter>
+    <filter id="mb2" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="0 7"/></filter>
+    <filter id="mb3" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="0 13"/></filter>
+    <filter id="mb4" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="0 22"/></filter>
+  </defs>
+</svg>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
