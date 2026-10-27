@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0f6a44"/>
+  <g transform="translate(256 270) rotate(-12)">
+    <rect x="-118" y="-160" width="236" height="320" rx="26" fill="#fff" stroke="#d8d2c4" stroke-width="4"/>
+    <text x="-96" y="-78" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="104" fill="#15171c">2</text>
+    <path transform="translate(-6 -10) scale(1.4)" fill="#15171c" d="M50 3 C38 22 6 38 6 60 C6 74 17 82 29 82 C37 82 43 78 46.5 72 C46 82 41 90 32 97 L68 97 C59 90 54 82 53.5 72 C57 78 63 82 71 82 C83 82 94 74 94 60 C94 38 62 22 50 3 Z"/>
+  </g>
+</svg>
