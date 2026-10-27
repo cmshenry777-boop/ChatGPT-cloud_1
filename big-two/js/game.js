@@ -3,7 +3,8 @@
 
 import { newDeck, shuffle, sortByRank, evaluate, checkPlay, penalty, THREE_OF_DIAMONDS } from './rules.js';
 
-export const BOT_NAMES = ['민지', '도윤', '서연'];
+// Placeholder names, so they never clash with the real people at the table.
+export const BOT_NAMES = ['철수', '영희', '길동'];
 
 export function newGame(settings, rand = Math.random) {
   const n = settings.players === 3 ? 3 : 4;
@@ -44,6 +45,7 @@ export function startRound(state, rand = Math.random) {
   state.passes = 0; // consecutive passes since the lead was played
   state.firstPlay = true; // the opening play must include the 3♦
   state.trick = []; // [{ player, cards|null }] everything that happened in this trick
+  state.log = []; // the whole round: [{ player, cards|null }] and { won: player } at each trick end
   state.phase = 'play';
   state.roundResult = null;
   return state;
@@ -72,6 +74,7 @@ export function play(state, p, cards) {
   state.lead = { player: p, cards: sortByRank(cards) };
   state.passes = 0;
   state.trick.push({ player: p, cards: sortByRank(cards) });
+  state.log.push({ player: p, cards: sortByRank(cards) });
 
   if (player.hand.length === 0) {
     endRound(state, p);
@@ -84,9 +87,11 @@ export function pass(state, p) {
   if (!canPass(state, p)) throw new Error('cannot pass now');
   state.passes += 1;
   state.trick.push({ player: p, cards: null });
+  state.log.push({ player: p, cards: null });
   // Everyone else passed → whoever played last wins the trick and leads anything.
   if (state.passes >= state.players.length - 1) {
     state.turn = state.lead.player;
+    state.log.push({ won: state.turn });
     state.lead = null;
     state.passes = 0;
     state.trick = [];
