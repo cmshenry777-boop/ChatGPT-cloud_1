@@ -1,0 +1,16 @@
+{
+  "name": "빅투 Big Two",
+  "short_name": "빅투",
+  "description": "세로 화면에 맞춘 빅투 카드 게임",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b4a2f",
+  "theme_color": "#0b4a2f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

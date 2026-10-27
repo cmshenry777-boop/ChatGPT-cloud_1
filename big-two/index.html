@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b4a2f">
+  <meta name="description" content="세로 화면에 맞춘 빅투(Big Two) 카드 게임. 봇 3명과 오프라인으로 플레이.">
+  <title>빅투 Big Two</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="top">
+      <button id="btn-menu" class="icon-btn" aria-label="메뉴">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+      <div id="round-label" class="round-label"></div>
+      <button id="btn-score" class="pill">점수표</button>
+    </header>
+
+    <section id="seats" class="seats" aria-label="상대 플레이어"></section>
+
+    <section class="table" aria-live="polite">
+      <div id="trick-caption" class="caption"></div>
+      <div id="trick-cards" class="trick-cards"></div>
+      <div id="table-msg" class="table-msg"></div>
+    </section>
+
+    <div class="me-bar">
+      <span id="me-label" class="me-label"></span>
+      <span id="status" class="status" aria-live="polite"></span>
+    </div>
+
+    <section id="hand" class="hand" aria-label="내 카드"></section>
+
+    <nav class="actions">
+      <button id="btn-sort">정렬</button>
+      <button id="btn-hint">힌트</button>
+      <button id="btn-pass">패스</button>
+      <button id="btn-play" class="primary">내기</button>
+    </nav>
+  </div>
+
+  <div id="overlay" class="overlay" hidden>
+    <div class="sheet" role="dialog" aria-modal="true"><div id="sheet-body"></div></div>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- Suit shapes as vector paths: crisp at any size, and never swapped for emoji glyphs. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="suit-d" viewBox="0 0 100 100"><path fill="currentColor" d="M50 3 L90 50 L50 97 L10 50 Z"/></symbol>
+      <symbol id="suit-h" viewBox="0 0 100 100"><path fill="currentColor" d="M50 92 C22 70 4 52 4 31 C4 15 16 5 29 5 C39 5 46 11 50 20 C54 11 61 5 71 5 C84 5 96 15 96 31 C96 52 78 70 50 92 Z"/></symbol>
+      <symbol id="suit-s" viewBox="0 0 100 100"><path fill="currentColor" d="M50 3 C38 22 6 38 6 60 C6 74 17 82 29 82 C37 82 43 78 46.5 72 C46 82 41 90 32 97 L68 97 C59 90 54 82 53.5 72 C57 78 63 82 71 82 C83 82 94 74 94 60 C94 38 62 22 50 3 Z"/></symbol>
+      <symbol id="suit-c" viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="27" r="21"/><circle cx="27" cy="58" r="21"/><circle cx="73" cy="58" r="21"/><path d="M45 50 C45 78 40 89 31 97 L69 97 C60 89 55 78 55 50 Z"/></g></symbol>
+    </defs>
+  </svg>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
