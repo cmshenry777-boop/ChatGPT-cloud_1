@@ -33,8 +33,7 @@ button {
 }
 
 #app {
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   max-width: 560px;
   margin: 0 auto;
   display: flex;
@@ -270,7 +269,7 @@ body.four .suit-c { color: var(--green); }
 
 /* ── toast ──────────────────────────────────────────── */
 .toast {
-  position: fixed; left: 50%; top: 30%; z-index: 30;
+  position: fixed; left: 50%; top: 21%; z-index: 30;
   transform: translateX(-50%);
   max-width: 90vw; padding: 10px 16px; border-radius: 14px;
   background: rgba(20, 22, 20, .92); color: #fff;

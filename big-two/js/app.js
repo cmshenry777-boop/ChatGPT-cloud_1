@@ -427,8 +427,22 @@ function showMenu() {
     b.querySelector('#m-rules').onclick = showRules;
     b.querySelector('#m-settings').onclick = showSettings;
     b.querySelector('#m-full').onclick = () => { document.documentElement.requestFullscreen?.().catch(() => {}); closeSheet(); };
-    b.querySelector('#m-new').onclick = () => { if (confirm('지금 게임을 끝내고 새로 시작할까요?')) startNewGame(); };
+    b.querySelector('#m-new').onclick = confirmNewGame;
     b.querySelector('#m-close').onclick = closeSheet;
+  });
+}
+
+function confirmNewGame() {
+  openSheet(`
+    <h2>새 게임을 시작할까요?</h2>
+    <p>지금 게임은 저장되지 않고 사라져요.</p>
+    <div class="btns">
+      <button class="btn primary" id="c-yes">새 게임 시작</button>
+      <button class="btn" id="c-no">계속하기</button>
+    </div>`,
+  b => {
+    b.querySelector('#c-yes').onclick = startNewGame;
+    b.querySelector('#c-no').onclick = closeSheet;
   });
 }
 
